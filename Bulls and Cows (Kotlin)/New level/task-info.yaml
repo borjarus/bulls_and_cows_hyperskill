@@ -4,6 +4,7 @@ files:
     visible: true
     learner_created: false
   - name: test/BullsCowsTest.java
+    visible: true
     learner_created: false
 feedback_link: https://hyperskill.org/projects/364/stages/2160/implement#comment
 status: Unchecked
