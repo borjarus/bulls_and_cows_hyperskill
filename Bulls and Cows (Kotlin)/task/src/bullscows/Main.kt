@@ -1,34 +1,29 @@
 package bullscows
 
 fun main() {
-    println("The secret code is prepared: ****.")
+    val secret = "9305"
+    val guess = readln().trim()
 
-    println("\nTurn 1. Answer:")
-    println("1234")
-    println("Grade: 1 cow.")
+    val bulls = countBulls(secret, guess)
+    val cows = countCows(secret, guess)
 
-    println("\nTurn 2. Answer:")
-    println("5678")
-    println("Grade: 1 cow.")
+    val grade = when {
+        bulls == 0 && cows == 0 -> "None"
+        bulls > 0 && cows > 0 -> "$bulls bull(s) and $cows cow(s)"
+        bulls > 0 -> "$bulls bull(s)"
+        else -> "$cows cow(s)"
+    }
 
-    println("\nTurn 3. Answer:")
-    println("9012")
-    println("Grade: 1 bull and 1 cow.")
-
-    println("\nTurn 4. Answer:")
-    println("9087")
-    println("Grade: 1 bull and 1 cow.")
-
-    println("\nTurn 5. Answer:")
-    println("1087")
-    println("Grade: 1 cow.")
-
-    println("\nTurn 6. Answer:")
-    println("9205")
-    println("Grade: 3 bulls.")
-
-    println("\nTurn 7. Answer:")
-    println("9305")
-    println("Grade: 4 bulls.")
-    println("Congrats! The secret code is 9305.")
+    println("Grade: $grade. The secret code is $secret.")
 }
+
+fun countCows(secret: String, guess: String): Int =
+    ('0'..'9').sumOf { ch ->
+        val inSecret = secret.count { it == ch }
+        val inGuess = guess.count { it == ch }
+        minOf(inSecret, inGuess)
+    }
+
+
+fun countBulls(secret: String, guess: String): Int =
+    secret.indices.count { i -> secret[i] == guess[i] }
