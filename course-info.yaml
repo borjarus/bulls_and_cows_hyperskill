@@ -7,6 +7,10 @@ summary: <p>Write your own advanced version of the classic code-breaking game "B
 programming_language: Kotlin
 content:
   - Bulls and Cows (Kotlin)
-additional_files: [ ]
+additional_files:
+  - name: build.gradle
+    visible: true
+  - name: settings.gradle
+    visible: true
 mode: Study
 yaml_version: 5

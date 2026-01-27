@@ -1,29 +1,41 @@
 package bullscows
+import java.util.LinkedHashSet
 
 fun main() {
-    val secret = "9305"
-    val guess = readln().trim()
+    val length = readln().trim().toInt()
 
-    val bulls = countBulls(secret, guess)
-    val cows = countCows(secret, guess)
-
-    val grade = when {
-        bulls == 0 && cows == 0 -> "None"
-        bulls > 0 && cows > 0 -> "$bulls bull(s) and $cows cow(s)"
-        bulls > 0 -> "$bulls bull(s)"
-        else -> "$cows cow(s)"
+    if (length > 10) {
+        println("Error: can't generate a secret number with a length of $length because there aren't enough unique digits.")
+        return
     }
 
-    println("Grade: $grade. The secret code is $secret.")
+    val secret = generateSecret(length)
+    println("The random secret number is $secret.")
 }
 
-fun countCows(secret: String, guess: String): Int =
-    ('0'..'9').sumOf { ch ->
-        val inSecret = secret.count { it == ch }
-        val inGuess = guess.count { it == ch }
-        minOf(inSecret, inGuess)
+fun generateSecret(length: Int): String =
+    generateSequence { System.nanoTime().toString().reversed() }
+        .map { takeUniqueDigits(it, length) }
+        .first { it.length == length }
+
+private fun takeUniqueDigits(source: String, length: Int): String {
+    // first, build unique digits from source, skipping leading zero
+    val raw = source.fold("") { acc, ch ->
+        if (acc.length == length) acc
+        else if (ch !in acc && !(acc.isEmpty() && ch == '0')) acc + ch
+        else acc
     }
 
+    if (raw.length == length) return raw
 
-fun countBulls(secret: String, guess: String): Int =
-    secret.indices.count { i -> secret[i] == guess[i] }
+    // if still short, fill from remaining digits 0–9 (keeping first digit non‑zero)
+    val used = raw.toSet()
+    val filler = ('0'..'9')
+        .asSequence()
+        .filter { it !in used }
+        .filterIndexed { index, ch -> !(raw.isEmpty() && index == 0 && ch == '0') }
+        .take(length - raw.length)
+        .joinToString("")
+
+    return raw + filler
+}
