@@ -1,33 +1,21 @@
 package bullscows
+
 import java.util.LinkedHashSet
+import kotlin.random.Random
 
 fun generateSecret(length: Int): String = when {
     length > 10 -> "Error: can't generate a secret number with a length of $length because there aren't enough unique digits."
     length <= 0 -> "Error: length must be positive"
-    else ->     generateSequence { System.nanoTime().toString().reversed() }
-        .map { takeUniqueDigits(it, length) }
-        .first { it.length == length }
-}
-
-
-private fun takeUniqueDigits(source: String, length: Int): String {
-    val raw = source.fold("") { acc, ch ->
-        if (acc.length == length) acc
-        else if (ch !in acc && !(acc.isEmpty() && ch == '0')) acc + ch
-        else acc
-    }
-
-    if (raw.length == length) return raw
-
-    val used = raw.toSet()
-    val filler = ('0'..'9')
-        .asSequence()
-        .filter { it !in used }
-        .filterIndexed { index, ch -> !(raw.isEmpty() && index == 0 && ch == '0') }
-        .take(length - raw.length)
-        .joinToString("")
-
-    return raw + filler
+    else ->
+        (1..9).random()
+            .let { first ->
+                generateSequence(first.toString()) { acc ->
+                    val nextDigit = Random.nextInt(0, 10).toString()
+                    if (nextDigit !in acc) acc + nextDigit else acc
+                }
+                .take(length)
+                .first { it.length == length }
+            }
 }
 
 fun grade(secret: String, guess: String): Pair<Int, Int> {
